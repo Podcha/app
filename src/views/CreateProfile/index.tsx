@@ -43,7 +43,7 @@ const CreateProfile = () => {
     setUser(accounts[0]);
   };
 
-  const uploadImage = async () => {
+  const profileCreate = async () => {
     const storage = new Web3Storage({
       /* @ts-ignore */
       token: process.env.REACT_APP_WEB3_STORAGE,
@@ -54,10 +54,6 @@ const CreateProfile = () => {
     });
 
     if (file) setImageCID(`https://${cid}.ipfs.dweb.link/${file[0].name}`);
-  };
-
-  const profileCreate = async () => {
-    await uploadImage();
 
     const client = new NFTStorage({
       /* @ts-ignore */
