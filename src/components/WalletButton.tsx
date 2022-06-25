@@ -38,7 +38,7 @@ export function WalletButton() {
   return (
     <ul className="p-0 menu menu-horizontal rounded-t-box">
       <li>
-        <button className="flex w-64 btn">
+        <button className="flex w-64 btn hover:rounded-b-none">
           <div
             className="w-8 h-8 -m-2 bg-center bg-cover rounded-full"
             style={{
@@ -51,6 +51,11 @@ export function WalletButton() {
               : `${account.substring(0, 6)}...
           ${account.substring(account.length - 4, account.length)}`}
           </div>
+          {activeProfile?.attributes.app?.value === lensAppId ? (
+            <div>P</div>
+          ) : (
+            <div>O</div>
+          )}
           <DropdownIcon />
         </button>
         <ul className="z-10 w-full py-2 mt-0 space-y-2 bg-base-200 menu menu-vertical">
@@ -72,9 +77,9 @@ export function WalletButton() {
                   {profile.handle}
                 </div>{" "}
                 {profile.attributes.app?.value === lensAppId ? (
-                  <div>Podcha</div>
+                  <div>P</div>
                 ) : (
-                  <div>Other</div>
+                  <div>O</div>
                 )}
               </button>
             ))}
