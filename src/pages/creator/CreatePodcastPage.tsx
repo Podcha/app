@@ -2,14 +2,8 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 import { client, getProfiles } from "../../queries";
+import { lensMockProfileCreationAddress } from "../../consts";
 import {
-  mockProfileAddress,
-  LensHubProxyAddress,
-  freeCollectModuleAddress,
-} from "../../consts";
-import {
-  LensHub__factory,
-  LensHub,
   MockProfileCreationProxy__factory,
   MockProfileCreationProxy,
 } from "../../contracts/lens";
@@ -17,7 +11,6 @@ import {
 export function CreatePodcastPage() {
   const [user, setUser] = useState(null);
   const [userHandle, setUserHandle] = useState<string>("");
-  const [lensHubContract, setLensHubContract] = useState<LensHub>();
   const [lensMockProfileContract, setLensMockProfileContract] =
     useState<MockProfileCreationProxy>();
   const [profiles, setProfiles] = useState<any[]>([]);
@@ -99,11 +92,11 @@ export function CreatePodcastPage() {
         const signer = provider.getSigner();
 
         setProfiles([...(response.data.profiles?.items || null)]);
-        setLensHubContract(
-          LensHub__factory.connect(LensHubProxyAddress, signer)
-        );
         setLensMockProfileContract(
-          MockProfileCreationProxy__factory.connect(mockProfileAddress, signer)
+          MockProfileCreationProxy__factory.connect(
+            lensMockProfileCreationAddress,
+            signer
+          )
         );
       } catch (error) {
         console.error({ error });
@@ -138,4 +131,4 @@ export function CreatePodcastPage() {
       </div>
     </div>
   );
-};
+}
