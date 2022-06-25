@@ -9,7 +9,7 @@ import {
   LandingScaffold,
 } from "./pages";
 
-export function App() {
+const App = () => {
   return (
     <Routes>
       <Route element={<LandingScaffold />}>
@@ -28,4 +28,6 @@ export function App() {
       </Route>
     </Routes>
   );
-}
+};
+
+export default App;

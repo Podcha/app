@@ -51,7 +51,7 @@ export function AppNavbar() {
             ))}
           </ul>
         </div>
-        <a className="text-xl normal-case btn btn-ghost">Podcha</a>
+        <a className="text-xl normal-case btn btn-ghost"><img className='pr-2' src='/podcha.png'/> Podcha</a>
         <div className="hidden lg:flex">
           <ul className="p-0 menu menu-horizontal">
             {links.map((link, key) => (
