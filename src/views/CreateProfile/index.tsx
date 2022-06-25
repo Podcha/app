@@ -245,7 +245,7 @@ const CreateProfile = () => {
                   className="w-40 h-20 border-solid border-4 border-black cursor-pointer hover:scale-110 active:scale-90"
                 >
                   <img
-                    src={profile.picture.original.url}
+                    src={profile.picture?.original?.url}
                     alt="ProfilePic"
                     className="w-10 h-10"
                   />
