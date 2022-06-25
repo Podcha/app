@@ -57,9 +57,7 @@ const CreateProfile = () => {
   };
 
   const profileCreate = async () => {
-    if (!imageCID) {
-      await uploadImage();
-    }
+    await uploadImage();
 
     const client = new NFTStorage({
       /* @ts-ignore */
