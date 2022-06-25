@@ -1,1 +1,2 @@
-export * from "./Scaffold";
+export * from "./AppScaffold";
+export * from "./LandingScaffold";

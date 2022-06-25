@@ -1,12 +1,24 @@
+import { NavLink } from "react-router-dom";
 import { DropdownIcon, DroprightIcon, HamburgerIcon } from "./icons";
 
-const links: { name: string; children?: { name: string }[] }[] = [
-  { name: "Podcasts" },
-  { name: "Episodes", children: [{ name: "Link 1" }, { name: "Link 2" }] },
-  { name: "My show" },
+const links: {
+  name: string;
+  to: string;
+  children?: { name: string; to: string }[];
+}[] = [
+  { name: "Podcasts", to: "/podcasts" },
+  {
+    name: "Episodes",
+    to: "/episodes",
+    children: [
+      { name: "Recommended", to: "/episodes/recommended" },
+      { name: "Newest", to: "/episodes/newest" },
+    ],
+  },
+  { name: "My show", to: "/podcast/create" },
 ];
 
-export function Navbar() {
+export function AppNavbar() {
   let tabIndex = 0;
   return (
     <div className="navbar bg-base-100 rounded-box">
@@ -21,16 +33,18 @@ export function Navbar() {
           >
             {links.map((link, key) => (
               <li key={key} tabIndex={tabIndex++}>
-                <a className="justify-between">
-                  {link.name}
-                  {link.children && <DroprightIcon />}
-                </a>
+                <NavLink to={link.to} className="justify-between">
+                  <li>
+                    {link.name}
+                    {link.children && <DroprightIcon />}
+                  </li>
+                </NavLink>
                 {link.children && (
                   <ul className="p-2 bg-base-200">
                     {link.children.map((sublink, key) => (
-                      <li key={key}>
-                        <a>{sublink.name}</a>
-                      </li>
+                      <NavLink key={key} to={sublink.to}>
+                        <li>{sublink.name}</li>
+                      </NavLink>
                     ))}
                   </ul>
                 )}
@@ -42,16 +56,18 @@ export function Navbar() {
         <div className="hidden lg:flex">
           <ul className="p-0 menu menu-horizontal">
             {links.map((link, key) => (
-              <li key={key} tabIndex={tabIndex++}>
-                <a className="justify-between">
+              <li tabIndex={tabIndex++} className="justify-between">
+                <NavLink key={key} to={link.to}>
                   {link.name}
                   {link.children && <DropdownIcon />}
-                </a>
+                </NavLink>
                 {link.children && (
                   <ul className="p-2 bg-base-200">
                     {link.children.map((sublink, key) => (
-                      <li key={key}>
-                        <a>{sublink.name}</a>
+                      <li>
+                        <NavLink key={key} to={sublink.to}>
+                          {sublink.name}
+                        </NavLink>
                       </li>
                     ))}
                   </ul>
