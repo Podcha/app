@@ -138,6 +138,6 @@ const CreateProfile = () => {
       </div>
     </div>
   );
-};;;;;
+};
 
 export default CreateProfile;
