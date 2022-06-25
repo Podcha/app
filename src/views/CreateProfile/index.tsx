@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 import { client, getProfiles } from "../../queries";
@@ -12,6 +12,7 @@ import LensHubABI from "../../abi/LensHubABI.json";
 
 const CreateProfile = () => {
   const [user, setUser] = useState(null);
+  const [profiles, setProfiles] = useState<any[]>([]);
 
   const connect = async () => {
     /* @ts-ignore */
@@ -110,18 +111,36 @@ const CreateProfile = () => {
         .query(getProfiles, { address: user })
         .toPromise();
       console.log(response);
+
+      setProfiles([...(response.data.profiles?.items || null)]);
     } catch (error) {
       console.error({ error });
     }
   };
 
+  useEffect(() => {
+    if (!user) return;
+
+    fetchProfile();
+  }, [user]);
+
+  if (!user) {
+    return <button onClick={connect}>Connect</button>;
+  }
+
   return (
     <div>
-      <button onClick={fetchProfile}>Get Profile</button>
-      {user ? user : <button onClick={connect}>Connect</button>}
-      <button onClick={profileCreate}>Create</button>
-      <button onClick={setDefaultProfile}>Set Default Profile</button>
-      <button onClick={post}>Post</button>
+      {user}
+      {!profiles ? (
+        <button onClick={profileCreate}>Create</button>
+      ) : (
+        <div>
+          List of your profiles:
+          {profiles.map((profile) => (
+            <p>{profile.handle}</p>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
