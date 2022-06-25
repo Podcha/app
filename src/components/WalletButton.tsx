@@ -53,7 +53,7 @@ export function WalletButton() {
           </div>
           <DropdownIcon />
         </button>
-        <ul className="w-full py-2 mt-0 space-y-2 bg-base-200 menu menu-vertical">
+        <ul className="z-10 w-full py-2 mt-0 space-y-2 bg-base-200 menu menu-vertical">
           {profiles
             ?.filter((profile) => profile !== activeProfile)
             .map((profile, key) => (
