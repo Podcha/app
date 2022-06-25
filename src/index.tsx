@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import { DAppProvider } from "@usedapp/core";
 import { dappConfig } from "./consts";
+import { LensProvider } from "./context";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -14,9 +15,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <DAppProvider config={dappConfig}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <LensProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </LensProvider>
     </DAppProvider>
   </React.StrictMode>
 );

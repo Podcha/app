@@ -1,9 +1,13 @@
 import { useEthers } from "@usedapp/core";
-import { walletConnectProvider } from "../consts";
+import { lensAppId, walletConnectProvider } from "../consts";
+import { useLens } from "../context";
 import { DropdownIcon } from "./icons";
 
 export function WalletButton() {
   const { activate, activateBrowserWallet, account, deactivate } = useEthers();
+  const { profiles, activeProfile, setActiveProfile } = useLens();
+
+  console.log(profiles);
 
   const activateWalletConnect = async () => {
     await walletConnectProvider.enable();
@@ -34,30 +38,48 @@ export function WalletButton() {
   return (
     <ul className="p-0 menu menu-horizontal rounded-t-box">
       <li>
-        <button className="btn">
+        <button className="flex w-64 btn">
           <div
             className="w-8 h-8 -m-2 bg-center bg-cover rounded-full"
             style={{
-              backgroundImage: `url(https://api.lorem.space/image/face?hash=33791)`,
+              backgroundImage: `url(${activeProfile?.picture.original.url})`,
             }}
           />
-          {account.substring(0, 6)}...
-          {account.substring(account.length - 4, account.length)}
+          <div className="flex-1 w-0 overflow-hidden text-ellipsis">
+            {activeProfile
+              ? activeProfile.handle
+              : `${account.substring(0, 6)}...
+          ${account.substring(account.length - 4, account.length)}`}
+          </div>
+          <DropdownIcon />
         </button>
-        <ul className="w-full p-2 mt-0 space-y-2 bg-base-200 menu menu-vertical">
-          {["Profile 1", "Profile 2", "Profile 3"].map((profile, key) => (
-            <button className="btn" key={key}>
-              <div
-                className="w-8 h-8 mr-2 -m-2 bg-center bg-cover rounded-full"
-                style={{
-                  backgroundImage: `url(https://api.lorem.space/image/face?hash=${key})`,
-                }}
-              />
-              {profile}
-            </button>
-          ))}
+        <ul className="w-full py-2 mt-0 space-y-2 bg-base-200 menu menu-vertical">
+          {profiles
+            ?.filter((profile) => profile !== activeProfile)
+            .map((profile, key) => (
+              <button
+                className={"btn text-ellipsis flex rounded-none"}
+                key={key}
+                onClick={() => setActiveProfile(profile)}
+              >
+                <div
+                  className="w-8 h-8 mr-1 -m-2 bg-center bg-cover rounded-full"
+                  style={{
+                    backgroundImage: `url(${profile?.picture.original.url})`,
+                  }}
+                />
+                <div className="flex-1 overflow-hidden text-ellipsis">
+                  {profile.handle}
+                </div>{" "}
+                {profile.attributes.app?.value === lensAppId ? (
+                  <div>Podcha</div>
+                ) : (
+                  <div>Other</div>
+                )}
+              </button>
+            ))}
 
-          <button className="btn" onClick={deactivate}>
+          <button className="mx-2 btn" onClick={deactivate}>
             Disconnect
           </button>
         </ul>

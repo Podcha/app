@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 
-import { client, getProfiles } from "../../queries";
+import { lensApiClient as client, getProfiles } from "../../queries";
 import { lensMockProfileCreationAddress } from "../../consts";
 import {
   MockProfileCreationProxy__factory,
