@@ -5,15 +5,19 @@ import { App } from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import "./index.css";
+import { DAppProvider } from "@usedapp/core";
+import { dappConfig } from "./consts";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <DAppProvider config={dappConfig}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </DAppProvider>
   </React.StrictMode>
 );
 
