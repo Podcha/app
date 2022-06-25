@@ -3,7 +3,7 @@ import { walletConnectProvider } from "../consts";
 import { DropdownIcon } from "./icons";
 
 export function WalletButton() {
-  const { activate, activateBrowserWallet, account } = useEthers();
+  const { activate, activateBrowserWallet, account, deactivate } = useEthers();
 
   const activateWalletConnect = async () => {
     await walletConnectProvider.enable();
@@ -14,10 +14,10 @@ export function WalletButton() {
     return (
       <ul className="p-0 menu menu-horizontal rounded-box">
         <li>
-          <a>
+          <button className="btn">
             Connect wallet
             <DropdownIcon />
-          </a>
+          </button>
           <ul className="p-2 bg-base-200">
             <li>
               <button onClick={activateBrowserWallet}>Browser wallet</button>
@@ -32,14 +32,36 @@ export function WalletButton() {
   }
 
   return (
-    <button className="btn">
-      <div
-        className="h-12 w-12 m-[calc(-1rem-1px)] mr-4 rounded-l-[0.5rem] bg-cover bg-center"
-        style={{
-          backgroundImage: `url(https://api.lorem.space/image/face?hash=33791)`,
-        }}
-      />
-      @lensrocks
-    </button>
+    <ul className="p-0 menu menu-horizontal rounded-t-box">
+      <li>
+        <button className="btn">
+          <div
+            className="w-8 h-8 -m-2 bg-center bg-cover rounded-full"
+            style={{
+              backgroundImage: `url(https://api.lorem.space/image/face?hash=33791)`,
+            }}
+          />
+          {account.substring(0, 6)}...
+          {account.substring(account.length - 4, account.length)}
+        </button>
+        <ul className="w-full p-2 mt-0 space-y-2 bg-base-200 menu menu-vertical">
+          {["Profile 1", "Profile 2", "Profile 3"].map((profile, key) => (
+            <button className="btn" key={key}>
+              <div
+                className="w-8 h-8 mr-2 -m-2 bg-center bg-cover rounded-full"
+                style={{
+                  backgroundImage: `url(https://api.lorem.space/image/face?hash=${key})`,
+                }}
+              />
+              {profile}
+            </button>
+          ))}
+
+          <button className="btn" onClick={deactivate}>
+            Disconnect
+          </button>
+        </ul>
+      </li>
+    </ul>
   );
 }
