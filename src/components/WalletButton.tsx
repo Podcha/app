@@ -39,12 +39,14 @@ export function WalletButton() {
     <ul className="p-0 menu menu-horizontal rounded-t-box">
       <li>
         <button className="flex w-64 btn hover:rounded-b-none">
-          <div
-            className="w-8 h-8 -m-2 bg-center bg-cover rounded-full"
-            style={{
-              backgroundImage: `url(${activeProfile?.picture.original.url})`,
-            }}
-          />
+          {activeProfile?.picture && (
+            <div
+              className="w-8 h-8 -m-2 bg-center bg-cover rounded-full"
+              style={{
+                backgroundImage: `url(${activeProfile?.picture?.original.url})`,
+              }}
+            />
+          )}
           <div className="flex-1 w-0 overflow-hidden text-ellipsis">
             {activeProfile
               ? activeProfile.handle
@@ -67,12 +69,14 @@ export function WalletButton() {
                 key={key}
                 onClick={() => setActiveProfile(profile)}
               >
-                <div
-                  className="w-8 h-8 mr-1 -m-2 bg-center bg-cover rounded-full"
-                  style={{
-                    backgroundImage: `url(${profile?.picture.original.url})`,
-                  }}
-                />
+                {profile.picture && (
+                  <div
+                    className="w-8 h-8 mr-1 -m-2 bg-center bg-cover rounded-full"
+                    style={{
+                      backgroundImage: `url(${profile?.picture.original.url})`,
+                    }}
+                  />
+                )}
                 <div className="flex-1 overflow-hidden text-ellipsis">
                   {profile.handle}
                 </div>{" "}
