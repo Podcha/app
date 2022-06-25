@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import { Web3Storage } from "web3.storage";
 
 import { client, getProfiles } from "../../queries";
 import {
@@ -18,6 +19,8 @@ const CreateProfile = () => {
   const [user, setUser] = useState(null);
   const [userHandle, setUserHandle] = useState<string>("");
   const [lensHubContract, setLensHubContract] = useState<LensHub>();
+  const [imageCID, setImageCID] = useState<string>("");
+  const [file, setFile] = useState<FileList | null>();
   const [lensMockProfileContract, setLensMockProfileContract] =
     useState<MockProfileCreationProxy>();
   const [profiles, setProfiles] = useState<any[]>([]);
@@ -30,12 +33,27 @@ const CreateProfile = () => {
     setUser(accounts[0]);
   };
 
+  const uploadImage = async () => {
+    const storage = new Web3Storage({
+      /* @ts-ignore */
+      token: process.env.REACT_APP_WEB3_STORAGE,
+    });
+    /* @ts-ignore */
+    const cid = await storage.put(file, {
+      maxRetries: 3,
+    });
+
+    if (file) setImageCID(`https://${cid}.ipfs.dweb.link/${file[0].name}`);
+  };
+
   const profileCreate = async () => {
+    if (!imageCID) {
+      await uploadImage();
+    }
     const inputStruct = {
       to: user,
       handle: userHandle,
-      imageURI:
-        "https://ipfs.io/ipfs/QmY9dUwYu67puaWBMxRKW98LPbXCznPwHUbhX5NeWnCJbX",
+      imageURI: imageCID,
       followModule: ethers.constants.AddressZero,
       followModuleInitData: ethers.utils.concat([]),
       followNFTURI:
@@ -127,11 +145,15 @@ const CreateProfile = () => {
           value={userHandle}
         />
         <button onClick={profileCreate}>Create</button>
+        <input type="file" onChange={(event) => setFile(event.target.files)} />
         {profiles && (
           <div>
             List of your profiles:
             {profiles.map((profile) => (
-              <p key={profile.handle}>{profile.handle}</p>
+              <div>
+                <img src={profile.picture.original.url} alt="ProfilePic" />
+                <p key={profile.handle}>{profile.handle}</p>
+              </div>
             ))}
           </div>
         )}
