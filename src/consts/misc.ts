@@ -1,1 +1,1 @@
-export const lensAppId = "podcha";
+export const lensAppId = "Podcha";
