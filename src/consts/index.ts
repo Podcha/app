@@ -4,3 +4,9 @@ export const freeCollectModuleAddress =
   "0x0BE6bD7092ee83D44a6eC1D949626FeE48caB30c";
 export const LensPeripheryAddress =
   "0xD5037d72877808cdE7F669563e9389930AF404E8";
+export * from "./contractAddresses";
+export * from "./dappConfig";
+export * from "./lensApiUrls";
+export * from "./misc";
+export * from "./rpcUrls";
+export * from "./walletConnectProvider";

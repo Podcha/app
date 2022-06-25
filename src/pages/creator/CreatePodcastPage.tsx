@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { Web3Storage } from "web3.storage";
 import { NFTStorage } from "nft.storage";
 import { v4 as uuidv4 } from "uuid";
-
-import { client, getProfiles } from "../../queries";
+import { useEthers } from "@usedapp/core";
+import { useLens } from "../../context";
 import {
   mockProfileAddress,
   LensHubProxyAddress,
@@ -20,7 +20,7 @@ import {
   LensPeriphery__factory,
 } from "../../contracts/Lens";
 
-const CreateProfile = () => {
+export function CreatePodcastPage() {
   const [user, setUser] = useState(null);
   const [userHandle, setUserHandle] = useState<string>("");
   const [title, setTitle] = useState<string>("");
@@ -33,7 +33,6 @@ const CreateProfile = () => {
     useState<MockProfileCreationProxy>();
   const [lensPeripheryContract, setLensPeripheryContract] =
     useState<LensPeriphery>();
-  const [profiles, setProfiles] = useState<any[]>([]);
 
   const connect = async () => {
     /* @ts-ignore */
@@ -42,6 +41,10 @@ const CreateProfile = () => {
     });
     setUser(accounts[0]);
   };
+
+
+  const { account } = useEthers();
+  const { profiles, refreshProfiles } = useLens();
 
   const profileCreate = async () => {
     const storage = new Web3Storage({
@@ -73,7 +76,7 @@ const CreateProfile = () => {
     }
 
     const inputStruct = {
-      to: user,
+      to: account,
       handle: userHandle,
       imageURI: imageCID,
       followModule: ethers.constants.AddressZero,
@@ -85,6 +88,7 @@ const CreateProfile = () => {
       /* @ts-ignore */
       const tx = await lensMockProfileContract.proxyCreateProfile(inputStruct);
       await tx.wait();
+      refreshProfiles();
     } catch (error) {
       console.error({ error });
     }
@@ -183,18 +187,11 @@ const CreateProfile = () => {
   useEffect(() => {
     if (!user) return;
 
-    const fetchProfilesAndSetContracts = async () => {
+    const setContracts = async () => {
       try {
-        const response = await client
-          .query(getProfiles, { address: user })
-          .toPromise();
-        console.log(response);
-
         /* @ts-ignore */
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-
-        setProfiles([...(response.data.profiles?.items || null)]);
         setLensHubContract(
           LensHub__factory.connect(LensHubProxyAddress, signer)
         );
@@ -209,7 +206,7 @@ const CreateProfile = () => {
       }
     };
 
-    fetchProfilesAndSetContracts();
+    setContracts();
   }, [user]);
 
   if (!user) {
@@ -273,6 +270,4 @@ const CreateProfile = () => {
       </div>
     </div>
   );
-};
-
-export default CreateProfile;
+}
