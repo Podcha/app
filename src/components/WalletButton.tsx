@@ -54,9 +54,15 @@ export function WalletButton() {
           ${account.substring(account.length - 4, account.length)}`}
           </div>
           {activeProfile?.attributes.app?.value === lensAppId ? (
-            <div>P</div>
+            <div
+              className="w-4 h-4 bg-center bg-contain"
+              style={{ backgroundImage: `url(/mic.png)` }}
+            ></div>
           ) : (
-            <div>O</div>
+            <div
+              className="w-4 h-4 bg-center bg-contain"
+              style={{ backgroundImage: `url(/lens.png)` }}
+            ></div>
           )}
           <DropdownIcon />
         </button>
@@ -65,7 +71,7 @@ export function WalletButton() {
             ?.filter((profile) => profile !== activeProfile)
             .map((profile, key) => (
               <button
-                className={"btn text-ellipsis flex rounded-none"}
+                className={"btn text-ellipsis flex rounded-none space-x-2"}
                 key={key}
                 onClick={() => setActiveProfile(profile)}
               >
@@ -81,9 +87,15 @@ export function WalletButton() {
                   {profile.handle}
                 </div>{" "}
                 {profile.attributes.app?.value === lensAppId ? (
-                  <div>P</div>
+                  <div
+                    className="w-4 h-4 bg-center bg-contain"
+                    style={{ backgroundImage: `url(/mic.png)` }}
+                  ></div>
                 ) : (
-                  <div>O</div>
+                  <div
+                    className="w-4 h-4 bg-center bg-contain"
+                    style={{ backgroundImage: `url(/lens.png)` }}
+                  ></div>
                 )}
               </button>
             ))}
