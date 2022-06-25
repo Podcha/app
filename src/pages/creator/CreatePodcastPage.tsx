@@ -1,31 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ethers } from "ethers";
-
-import { lensApiClient as client, getProfiles } from "../../queries";
-import { lensMockProfileCreationAddress } from "../../consts";
-import {
-  MockProfileCreationProxy__factory,
-  MockProfileCreationProxy,
-} from "../../contracts/lens";
+import { useEthers } from "@usedapp/core";
+import { useLens } from "../../context";
 
 export function CreatePodcastPage() {
-  const [user, setUser] = useState(null);
+  const { account } = useEthers();
+  const { profiles, refreshProfiles } = useLens();
   const [userHandle, setUserHandle] = useState<string>("");
-  const [lensMockProfileContract, setLensMockProfileContract] =
-    useState<MockProfileCreationProxy>();
-  const [profiles, setProfiles] = useState<any[]>([]);
-
-  const connect = async () => {
-    /* @ts-ignore */
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    setUser(accounts[0]);
-  };
 
   const profileCreate = async () => {
     const inputStruct = {
-      to: user,
+      to: account,
       handle: userHandle,
       imageURI:
         "https://ipfs.io/ipfs/QmY9dUwYu67puaWBMxRKW98LPbXCznPwHUbhX5NeWnCJbX",
@@ -39,6 +24,7 @@ export function CreatePodcastPage() {
       /* @ts-ignore */
       const tx = await lensMockProfileContract.proxyCreateProfile(inputStruct);
       await tx.wait();
+      refreshProfiles();
     } catch (error) {
       console.error({ error });
     }
@@ -77,42 +63,9 @@ export function CreatePodcastPage() {
   //   }
   // };
 
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchProfilesAndSetContracts = async () => {
-      try {
-        const response = await client
-          .query(getProfiles, { address: user })
-          .toPromise();
-        console.log(response);
-
-        /* @ts-ignore */
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-
-        setProfiles([...(response.data.profiles?.items || null)]);
-        setLensMockProfileContract(
-          MockProfileCreationProxy__factory.connect(
-            lensMockProfileCreationAddress,
-            signer
-          )
-        );
-      } catch (error) {
-        console.error({ error });
-      }
-    };
-
-    fetchProfilesAndSetContracts();
-  }, [user]);
-
-  if (!user) {
-    return <button onClick={connect}>Connect</button>;
-  }
-
   return (
     <div>
-      {user}
+      {account}
       <div>
         <input
           type="text"

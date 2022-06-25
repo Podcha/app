@@ -1,5 +1,11 @@
 import { useEthers } from "@usedapp/core";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { lensApiClient, getProfiles } from "../queries";
 
 interface LensProfilePicture {
@@ -41,10 +47,12 @@ interface LensContextValue {
   activeProfile?: LensProfile;
   defaultProfile?: LensProfile;
   setActiveProfile: (profile: LensProfile) => void;
+  refreshProfiles: () => void;
 }
 
 export const LensContext = createContext<LensContextValue>({
   setActiveProfile: () => {},
+  refreshProfiles: () => {},
 });
 
 export function LensProvider({ children }: { children: JSX.Element }) {
@@ -55,7 +63,7 @@ export function LensProvider({ children }: { children: JSX.Element }) {
 
   const { account: address } = useEthers();
 
-  useEffect(() => {
+  const refreshProfiles = useCallback(() => {
     if (!address) return setProfiles(undefined);
     lensApiClient
       .query(getProfiles, { address })
@@ -76,8 +84,12 @@ export function LensProvider({ children }: { children: JSX.Element }) {
           })
         );
       });
-    // TODO: this response is paginated, and we're just silently ignoring this fact
   }, [address]);
+
+  useEffect(() => {
+    refreshProfiles();
+    // TODO: this response is paginated, and we're just silently ignoring this fact
+  }, [refreshProfiles]);
 
   useEffect(() => {
     setActiveProfile(
@@ -93,6 +105,7 @@ export function LensProvider({ children }: { children: JSX.Element }) {
         profiles,
         defaultProfile,
         activeProfile,
+        refreshProfiles,
         setActiveProfile,
       }}
     >
