@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
 export function LandingNavbar() {
-  let tabIndex = 0;
   return (
     <div className="navbar bg-base-100 rounded-box">
       <div className="navbar-start">

@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { DropdownIcon, DroprightIcon, HamburgerIcon } from "./icons";
+import { WalletButton } from "./WalletButton";
 
 const links: {
   name: string;
@@ -34,10 +35,8 @@ export function AppNavbar() {
             {links.map((link, key) => (
               <li key={key} tabIndex={tabIndex++}>
                 <NavLink to={link.to} className="justify-between">
-                  <li>
-                    {link.name}
-                    {link.children && <DroprightIcon />}
-                  </li>
+                  {link.name}
+                  {link.children && <DroprightIcon />}
                 </NavLink>
                 {link.children && (
                   <ul className="p-2 bg-base-200">
@@ -56,18 +55,16 @@ export function AppNavbar() {
         <div className="hidden lg:flex">
           <ul className="p-0 menu menu-horizontal">
             {links.map((link, key) => (
-              <li tabIndex={tabIndex++} className="justify-between">
-                <NavLink key={key} to={link.to}>
+              <li key={key} tabIndex={tabIndex++} className="justify-between">
+                <NavLink to={link.to}>
                   {link.name}
                   {link.children && <DropdownIcon />}
                 </NavLink>
                 {link.children && (
                   <ul className="p-2 bg-base-200">
                     {link.children.map((sublink, key) => (
-                      <li>
-                        <NavLink key={key} to={sublink.to}>
-                          {sublink.name}
-                        </NavLink>
+                      <li key={key}>
+                        <NavLink to={sublink.to}>{sublink.name}</NavLink>
                       </li>
                     ))}
                   </ul>
@@ -78,15 +75,7 @@ export function AppNavbar() {
         </div>
       </div>
       <div className="navbar-end">
-        <button className="btn">
-          <div
-            className="h-12 w-12 m-[calc(-1rem-1px)] mr-4 rounded-l-[0.5rem] bg-cover bg-center"
-            style={{
-              backgroundImage: `url(https://api.lorem.space/image/face?hash=33791)`,
-            }}
-          />
-          @lensrocks
-        </button>
+        <WalletButton />
       </div>
     </div>
   );

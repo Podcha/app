@@ -5,7 +5,9 @@ export function LandingScaffold() {
   return (
     <div>
       <LandingNavbar />
-      <Outlet />
+      <div className="p-4 mt-4 rounded-box bg-base-100">
+        <Outlet />
+      </div>
     </div>
   );
 }
