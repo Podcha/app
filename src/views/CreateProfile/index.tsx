@@ -1,28 +1,38 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { Web3Storage } from "web3.storage";
+import { NFTStorage, File as NFTFile } from "nft.storage";
+import { v4 as uuidv4 } from "uuid";
 
 import { client, getProfiles } from "../../queries";
 import {
   mockProfileAddress,
   LensHubProxyAddress,
   freeCollectModuleAddress,
+  LensPeripheryAddress,
 } from "../../consts";
 import {
   LensHub__factory,
   LensHub,
   MockProfileCreationProxy__factory,
   MockProfileCreationProxy,
+  LensPeriphery,
+  LensPeriphery__factory,
 } from "../../contracts/Lens";
 
 const CreateProfile = () => {
   const [user, setUser] = useState(null);
   const [userHandle, setUserHandle] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [bio, setBio] = useState<string>("");
+  const [lensId, setLensId] = useState<string>("");
   const [lensHubContract, setLensHubContract] = useState<LensHub>();
   const [imageCID, setImageCID] = useState<string>("");
   const [file, setFile] = useState<FileList | null>();
   const [lensMockProfileContract, setLensMockProfileContract] =
     useState<MockProfileCreationProxy>();
+  const [lensPeripheryContract, setLensPeripheryContract] =
+    useState<LensPeriphery>();
   const [profiles, setProfiles] = useState<any[]>([]);
 
   const connect = async () => {
@@ -50,20 +60,94 @@ const CreateProfile = () => {
     if (!imageCID) {
       await uploadImage();
     }
+
+    const client = new NFTStorage({
+      /* @ts-ignore */
+      token: process.env.REACT_APP_NFT_STORAGE,
+    });
+
+    let followNFTURI = "";
+
+    if (file) {
+      const fileType = file[0].name.split(".")[1];
+      const nftURI = await client.store({
+        image: new Blob([file[0]], { type: `image/${fileType}` }),
+        description: "Podcha",
+        name: userHandle,
+      });
+      followNFTURI = nftURI.url;
+    }
+
     const inputStruct = {
       to: user,
       handle: userHandle,
       imageURI: imageCID,
       followModule: ethers.constants.AddressZero,
       followModuleInitData: ethers.utils.concat([]),
-      followNFTURI:
-        "https://ipfs.io/ipfs/QmTFLSXdEQ6qsSzaXaCSNtiv6wA56qq87ytXJ182dXDQJS",
+      followNFTURI,
     };
 
     try {
       /* @ts-ignore */
       const tx = await lensMockProfileContract.proxyCreateProfile(inputStruct);
       await tx.wait();
+    } catch (error) {
+      console.error({ error });
+    }
+  };
+
+  const setProfileMetadata = async () => {
+    try {
+      const storage = new Web3Storage({
+        /* @ts-ignore */
+        token: process.env.REACT_APP_WEB3_STORAGE,
+      });
+
+      let imageCID = "";
+
+      if (file) {
+        const coverImageCid = await storage.put(file, {
+          maxRetries: 3,
+          wrapWithDirectory: false,
+        });
+
+        imageCID = `https://${coverImageCid}.ipfs.dweb.link/`;
+      }
+      const metadata = {
+        name: title,
+        bio,
+        cover_picture: imageCID,
+        attributes: [
+          {
+            traitType: "boolean",
+            value: false,
+            key: "isCreator",
+          },
+          {
+            traitType: "string",
+            value: "Podcha",
+            key: "app",
+          },
+        ],
+        version: "1.0.0",
+        metadata_id: uuidv4(),
+      };
+
+      const blob = new Blob([JSON.stringify(metadata)], {
+        type: "application/json",
+      });
+      const metadataFile = new File([blob], "metadata.json");
+
+      const cid = await storage.put([metadataFile], {
+        maxRetries: 3,
+        wrapWithDirectory: false,
+      });
+
+      const updateMetadata = await lensPeripheryContract?.setProfileMetadataURI(
+        ethers.BigNumber.from(lensId),
+        `https://${cid}.ipfs.dweb.link/`
+      );
+      await updateMetadata?.wait();
     } catch (error) {
       console.error({ error });
     }
@@ -123,6 +207,9 @@ const CreateProfile = () => {
         setLensMockProfileContract(
           MockProfileCreationProxy__factory.connect(mockProfileAddress, signer)
         );
+        setLensPeripheryContract(
+          LensPeriphery__factory.connect(LensPeripheryAddress, signer)
+        );
       } catch (error) {
         console.error({ error });
       }
@@ -136,7 +223,7 @@ const CreateProfile = () => {
   }
 
   return (
-    <div>
+    <div className="text-black">
       {user}
       <div>
         <input
@@ -149,12 +236,44 @@ const CreateProfile = () => {
         {profiles && (
           <div>
             List of your profiles:
-            {profiles.map((profile) => (
+            <p>Selected Profile: {lensId}</p>
+            <div className="flex flex-col gap-2 m-2">
+              {profiles.map((profile) => (
+                <div
+                  key={profile.handle}
+                  onClick={() => setLensId(profile.id)}
+                  className="w-40 h-20 border-solid border-4 border-black cursor-pointer hover:scale-110 active:scale-90"
+                >
+                  <img
+                    src={profile.picture.original.url}
+                    alt="ProfilePic"
+                    className="w-10 h-10"
+                  />
+                  <p>{profile.handle}</p>
+                </div>
+              ))}
+            </div>
+            {lensId && (
               <div>
-                <img src={profile.picture.original.url} alt="ProfilePic" />
-                <p key={profile.handle}>{profile.handle}</p>
+                <p>Title: </p>
+                <input
+                  type="text"
+                  onChange={(event) => setTitle(event.target.value)}
+                  value={title}
+                />
+                <p>Bio: </p>
+                <input
+                  type="text"
+                  onChange={(event) => setBio(event.target.value)}
+                  value={bio}
+                />
+                <input
+                  type="file"
+                  onChange={(event) => setFile(event.target.files)}
+                />
+                <button onClick={setProfileMetadata}>Add metadata</button>
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>
