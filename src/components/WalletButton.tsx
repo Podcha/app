@@ -1,4 +1,5 @@
 import { useEthers } from "@usedapp/core";
+import { Link } from "react-router-dom";
 import { lensAppId, walletConnectProvider } from "../consts";
 import { useLens } from "../context";
 import { DropdownIcon } from "./icons";
@@ -100,9 +101,9 @@ export function WalletButton() {
               </button>
             ))}
           <div className="flex px-2 space-x-2">
-            <button className="btn" onClick={deactivate}>
-              +
-            </button>
+            <Link to="/podcast/create">
+              <button className="btn">+</button>
+            </Link>
             <button className="flex-1 btn" onClick={deactivate}>
               Disconnect
             </button>
