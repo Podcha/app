@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { Web3Storage } from "web3.storage";
-import { NFTStorage, File as NFTFile } from "nft.storage";
+import { NFTStorage } from "nft.storage";
 import { v4 as uuidv4 } from "uuid";
 
 import { client, getProfiles } from "../../queries";
