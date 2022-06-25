@@ -1,55 +1,10 @@
+import { DropdownIcon, DroprightIcon, HamburgerIcon } from "./icons";
+
 const links: { name: string; children?: { name: string }[] }[] = [
   { name: "Podcasts" },
   { name: "Episodes", children: [{ name: "Link 1" }, { name: "Link 2" }] },
   { name: "My show" },
 ];
-
-function HamburgerIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M4 6h16M4 12h8m-8 6h16"
-      />
-    </svg>
-  );
-}
-
-function DropdownRightIcon() {
-  return (
-    <svg
-      className="fill-current"
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-    >
-      <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
-    </svg>
-  );
-}
-
-function DropdownDownIcon() {
-  return (
-    <svg
-      className="fill-current"
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-    >
-      <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
-    </svg>
-  );
-}
 
 export function Navbar() {
   let tabIndex = 0;
@@ -68,7 +23,7 @@ export function Navbar() {
               <li key={key} tabIndex={tabIndex++}>
                 <a className="justify-between">
                   {link.name}
-                  {link.children && <DropdownRightIcon />}
+                  {link.children && <DroprightIcon />}
                 </a>
                 {link.children && (
                   <ul className="p-2 bg-base-200">
@@ -90,7 +45,7 @@ export function Navbar() {
               <li key={key} tabIndex={tabIndex++}>
                 <a className="justify-between">
                   {link.name}
-                  {link.children && <DropdownDownIcon />}
+                  {link.children && <DropdownIcon />}
                 </a>
                 {link.children && (
                   <ul className="p-2 bg-base-200">
