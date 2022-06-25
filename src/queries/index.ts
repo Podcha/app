@@ -1,9 +1,8 @@
 import { createClient } from "urql";
-
-const APIURL = "https://api-mumbai.lens.dev";
+import { lensMumbaiApiUrl } from "../consts";
 
 export const client = createClient({
-  url: APIURL,
+  url: lensMumbaiApiUrl,
 });
 
 export const getPublications = `
