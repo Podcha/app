@@ -22,7 +22,7 @@ export function WalletButton() {
             Connect wallet
             <DropdownIcon />
           </button>
-          <ul className="p-2 bg-base-200">
+          <ul className="z-10 p-2 bg-base-200">
             <li>
               <button onClick={activateBrowserWallet}>Browser wallet</button>
             </li>
@@ -99,10 +99,14 @@ export function WalletButton() {
                 )}
               </button>
             ))}
-
-          <button className="mx-2 btn" onClick={deactivate}>
-            Disconnect
-          </button>
+          <div className="flex px-2 space-x-2">
+            <button className="btn" onClick={deactivate}>
+              +
+            </button>
+            <button className="flex-1 btn" onClick={deactivate}>
+              Disconnect
+            </button>
+          </div>
         </ul>
       </li>
     </ul>

@@ -1,5 +1,4 @@
 import { useEthers } from "@usedapp/core";
-import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import { lensApiClient, getProfiles } from "../queries";
 
