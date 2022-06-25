@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { LandingNavbar } from "../../components";
+import { Footer, LandingNavbar } from "../../components";
 
 export function LandingScaffold() {
   return (
@@ -8,6 +8,7 @@ export function LandingScaffold() {
       <div className="p-4 mt-4 rounded-box bg-base-100">
         <Outlet />
       </div>
+      <Footer />
     </div>
   );
 }
