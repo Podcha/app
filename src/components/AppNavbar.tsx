@@ -8,6 +8,7 @@ const links: {
   children?: { name: string; to: string }[];
 }[] = [
   { name: "Podcasts", to: "/podcasts" },
+  { name: "Trending", to: "/trending" },
   {
     name: "Episodes",
     to: "/episodes",
