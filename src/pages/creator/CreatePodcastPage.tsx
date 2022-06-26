@@ -231,10 +231,12 @@ export function CreatePodcastPage() {
   return (
     <div>
       <div className="text-lg bold">Create podcast</div>
-      <WorldIDComponent
-        signal={account}
-        setProof={(proof: any) => setWorldIDProof(proof)}
-      />
+      {account && (
+        <WorldIDComponent
+          signal={account}
+          setProof={(proof: any) => setWorldIDProof(proof)}
+        />
+      )}
       <div>
         <div className="w-full max-w-xs form-control">
           <label className="label">

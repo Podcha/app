@@ -14,27 +14,28 @@ const hashBytes = (input: string) => {
 };
 /* @ts-ignore */
 export const WorldIDComponent = ({ signal, setProof }) => {
-  const enableWorldID = async () => {
-    try {
-      const result = await worldID.enable();
-      setProof(result);
-      console.log("World ID verified successfully: ", result);
-    } catch (error) {
-      console.error(error);
-      enableWorldID().catch(console.error.bind(console));
-    }
-  };
+ 
   useEffect(() => {
+    const enableWorldID = async () => {
+      try {
+        const result = await worldID.enable();
+        setProof(result);
+        console.log("World ID verified successfully: ", result);
+      } catch (error) {
+        console.error(error);
+        enableWorldID().catch(console.error.bind(console));
+      }
+    };
     if (!worldID.isInitialized()) {
       worldID.init("world-id-container", {
         /* @ts-ignore */
-        actionId: hashBytes(CONTRACT_ADDRESS),
+        action_id: "wid_BPZsRJANxct2cZxVRyh80SFG",
         signal,
       });
     }
     if (!worldID.isEnabled()) {
       enableWorldID().catch(console.error.bind(console));
     }
-  }, [enableWorldID, signal]);
+  }, [setProof, signal]);
   return <div id="world-id-container" />;
 };
