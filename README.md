@@ -1,46 +1,47 @@
-# Getting Started with Create React App
+<h1>
+<p align="center">
+  <img src="./public/podcha.png">
+  <br>Podcha
+</h1>
+  <p align="center">
+    Your favourite podcasts. On chain.
+    <br />
+    </p>
+</p>
+</br>
+</br>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## About The Project
+Podcha is decentralized platform where you can find, collect and listen to the world’s best podcasts.
 
-## Available Scripts
+## Idea
 
-In the project directory, you can run:
+Podcha hosts podcast content and allows to support favorite creators on the decentralized internet, without any controlling platform in the middle. No more getting banned and losing access to all followers or content at the whims of large platform companies.
 
-### `yarn start`
+With Podcha, users are in control of their data: the social graph is on the blockchain, and all audio or video is stored and hosted in a peer to peer platform.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+For the social graph, we use Lens, an interoperable standard for creating social media platforms and applications in web3. Both profiles and follows are NFTs on the Polygon network.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Regarding the data: this is stored in IPFS, a peer to peer service for hosting content on the internet. So creators, listeners and any other 'pinning' service pay all help with hosting the content.
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Technology
 
-### `yarn build`
+<h3 >
+  Frontend
+</h3>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) 
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+<div align="right">
+<h3 >
+  Web3
+</h3>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+![Solidity](https://img.shields.io/badge/Solidity-%23363636.svg?style=for-the-badge&logo=solidity&logoColor=white)
+![IPFS](https://img.shields.io/badge/-IPFS%2FFilecoin-green?style=for-the-badge)
+![WalletConnect](https://img.shields.io/badge/-WalletConnect-black?style=for-the-badge)
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+</div>
