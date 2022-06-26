@@ -2,16 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  @apply h-full;
-}
-
 body {
   background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  background-size: 400% 400%;
+  background-size: 400vh 400vw;
+  background-attachment: fixed;
   animation: gradient 30s ease infinite;
-  padding: 20px;
+  padding: 1.5rem;
 }
 
 @keyframes gradient {

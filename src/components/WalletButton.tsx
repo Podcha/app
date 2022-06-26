@@ -15,6 +15,8 @@ export function WalletButton() {
     activate(walletConnectProvider);
   };
 
+  const windowEthereum = Boolean((window as any).ethereum);
+
   if (!account) {
     return (
       <ul className="p-0 menu menu-horizontal rounded-box">
@@ -23,9 +25,19 @@ export function WalletButton() {
             Connect wallet
             <DropdownIcon />
           </button>
-          <ul className="z-10 p-2 bg-base-200">
+          <ul className="z-10 p-2 shadow-xl bg-base-200">
             <li>
-              <button onClick={activateBrowserWallet}>Browser wallet</button>
+              <button
+                className={
+                  !windowEthereum
+                    ? "opacity-50 disabled pointer-events-none"
+                    : ""
+                }
+                disabled={!windowEthereum}
+                onClick={activateBrowserWallet}
+              >
+                Browser wallet
+              </button>
             </li>
             <li>
               <button onClick={activateWalletConnect}>WalletConnect</button>
@@ -67,7 +79,7 @@ export function WalletButton() {
           )}
           <DropdownIcon />
         </button>
-        <ul className="z-10 w-full py-2 mt-0 space-y-2 bg-base-200 menu menu-vertical">
+        <ul className="z-10 w-full py-2 mt-0 space-y-2 shadow-xl bg-base-200 menu menu-vertical">
           {profiles
             ?.filter((profile) => profile !== activeProfile)
             .map((profile, key) => (

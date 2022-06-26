@@ -30,7 +30,7 @@ export function AppNavbar() {
           </label>
           <ul
             tabIndex={0}
-            className="p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
+            className="z-10 p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
           >
             {links.map((link, key) => (
               <li key={key} tabIndex={tabIndex++}>
@@ -39,7 +39,7 @@ export function AppNavbar() {
                   {link.children && <DroprightIcon />}
                 </NavLink>
                 {link.children && (
-                  <ul className="p-2 bg-base-200">
+                  <ul className="z-20 p-2 bg-base-200">
                     {link.children.map((sublink, key) => (
                       <NavLink key={key} to={sublink.to}>
                         <li>{sublink.name}</li>
@@ -51,9 +51,11 @@ export function AppNavbar() {
             ))}
           </ul>
         </div>
-        <a className="text-xl normal-case btn btn-ghost" href="/"><img className='pr-2' src='/podcha.png'/> Podcha</a>
+        <a className="text-xl normal-case btn btn-ghost" href="/">
+          <img className="pr-2" src="/podcha.png" /> Podcha
+        </a>
         <div className="hidden lg:flex">
-          <ul className="p-0 menu menu-horizontal">
+          <ul className="z-10 p-0 menu menu-horizontal">
             {links.map((link, key) => (
               <li key={key} tabIndex={tabIndex++} className="justify-between">
                 <NavLink to={link.to}>
@@ -61,7 +63,7 @@ export function AppNavbar() {
                   {link.children && <DropdownIcon />}
                 </NavLink>
                 {link.children && (
-                  <ul className="p-2 bg-base-200">
+                  <ul className="z-20 p-2 bg-base-200">
                     {link.children.map((sublink, key) => (
                       <li key={key}>
                         <NavLink to={sublink.to}>{sublink.name}</NavLink>
