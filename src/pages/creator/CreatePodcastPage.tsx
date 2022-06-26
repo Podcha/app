@@ -101,7 +101,7 @@ export function CreatePodcastPage() {
       refreshProfiles();
       navigate("/podcasts");
     },
-    [bio, coverPhoto, peripheryContract, title, refreshProfiles]
+    [bio, coverPhoto, peripheryContract, title, refreshProfiles, navigate]
   );
 
   useEffect(() => {
