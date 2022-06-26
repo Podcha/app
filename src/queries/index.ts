@@ -3,6 +3,7 @@ import { lensMumbaiApiUrl } from "../consts";
 
 export const lensApiClient = createClient({
   url: lensMumbaiApiUrl,
+  requestPolicy: "network-only",
 });
 
 export const getPublications = `

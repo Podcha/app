@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 // TODO: add typings for these libraries
@@ -10,94 +10,39 @@ import { NFTStorage } from "nft.storage";
 import { v4 as uuidv4 } from "uuid";
 import { useEthers } from "@usedapp/core";
 import { useLens } from "../../context";
-import { mockProfileAddress, LensPeripheryAddress } from "../../consts";
-import {
-  MockProfileCreationProxy__factory,
-  MockProfileCreationProxy,
-  LensPeriphery,
-  LensPeriphery__factory,
-} from "../../contracts/lens";
+import { useNavigate } from "react-router-dom";
 
 export function CreatePodcastPage() {
+  const navigate = useNavigate();
   const [userHandle, setUserHandle] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [bio, setBio] = useState<string>("");
-  const [lensId, setLensId] = useState<string>("");
-  const [imageCID, setImageCID] = useState<string>("");
-  const [file, setFile] = useState<FileList | null>();
-  const [lensMockProfileContract, setLensMockProfileContract] =
-    useState<MockProfileCreationProxy>();
-  const [lensPeripheryContract, setLensPeripheryContract] =
-    useState<LensPeriphery>();
+  const [avatar, setAvatar] = useState<File | null>();
+  const [coverPhoto, setCoverPhoto] = useState<File | null>();
+  const [step, setStep] = useState(0);
+  const [error, setError] = useState<string | undefined>();
 
   const { account } = useEthers();
-  const { profiles, refreshProfiles } = useLens();
+  const { profiles, refreshProfiles, peripheryContract, profileContract } =
+    useLens();
 
-  const profileCreate = async () => {
-    const storage = new Web3Storage({
-      /* @ts-ignore */
-      token: process.env.REACT_APP_WEB3_STORAGE,
-    });
-    /* @ts-ignore */
-    const cid = await storage.put(file, {
-      maxRetries: 3,
-    });
-
-    if (file) setImageCID(`https://${cid}.ipfs.dweb.link/${file[0].name}`);
-
-    const client = new NFTStorage({
-      /* @ts-ignore */
-      token: process.env.REACT_APP_NFT_STORAGE,
-    });
-
-    let followNFTURI = "";
-
-    if (file) {
-      const fileType = file[0].name.split(".")[1];
-      const nftURI = await client.store({
-        image: new Blob([file[0]], { type: `image/${fileType}` }),
-        description: "Podcha",
-        name: userHandle,
-      });
-      followNFTURI = nftURI.url;
-    }
-
-    const inputStruct = {
-      to: account,
-      handle: userHandle,
-      imageURI: imageCID,
-      followModule: ethers.constants.AddressZero,
-      followModuleInitData: ethers.utils.concat([]),
-      followNFTURI,
-    };
-
-    try {
-      /* @ts-ignore */
-      const tx = await lensMockProfileContract.proxyCreateProfile(inputStruct);
-      await tx.wait();
-      refreshProfiles();
-    } catch (error) {
-      console.error({ error });
-    }
-  };
-
-  const setProfileMetadata = async () => {
-    try {
+  const setProfileMetadata = useCallback(
+    async (id: string) => {
+      if (!coverPhoto) throw new Error("No avatar selected");
       const storage = new Web3Storage({
         /* @ts-ignore */
         token: process.env.REACT_APP_WEB3_STORAGE,
       });
 
-      let imageCID = "";
+      const coverImageCid = await storage.put([coverPhoto], {
+        maxRetries: 3,
+        wrapWithDirectory: false,
+      });
 
-      if (file) {
-        const coverImageCid = await storage.put(file, {
-          maxRetries: 3,
-          wrapWithDirectory: false,
-        });
+      setStep(7);
 
-        imageCID = `https://${coverImageCid}.ipfs.dweb.link/`;
-      }
+      let imageCID = `https://${coverImageCid}.ipfs.dweb.link/`;
+
       const metadata = {
         name: title,
         bio,
@@ -128,13 +73,98 @@ export function CreatePodcastPage() {
         wrapWithDirectory: false,
       });
 
-      const updateMetadata = await lensPeripheryContract?.setProfileMetadataURI(
-        ethers.BigNumber.from(lensId),
+      setStep(8);
+
+      const updateMetadata = await peripheryContract!.setProfileMetadataURI(
+        ethers.BigNumber.from(id),
         `https://${cid}.ipfs.dweb.link/`
       );
-      await updateMetadata?.wait();
+      await updateMetadata.wait();
+
+      setStep(0);
+      refreshProfiles();
+      navigate("/podcasts");
+    },
+    [bio, coverPhoto, peripheryContract, title, refreshProfiles]
+  );
+
+  useEffect(() => {
+    if (step !== 5) return;
+    const profile = profiles?.filter(
+      (profile) => profile.handle.split(".")[0] === userHandle
+    )[0];
+    if (!profile) {
+      refreshProfiles();
+      return;
+    }
+    setStep(6);
+    try {
+      setProfileMetadata(profile.id);
+    } catch (error) {
+      setError((error as Error).message);
+      setStep(0);
+    }
+  }, [step, profiles, setProfileMetadata, userHandle]);
+
+  const profileCreate = async () => {
+    if (!avatar) throw new Error("No avatar selected");
+
+    const storage = new Web3Storage({
+      /* @ts-ignore */
+      token: process.env.REACT_APP_WEB3_STORAGE,
+    });
+
+    const cid = await storage.put([avatar], {
+      maxRetries: 3,
+    });
+
+    setStep(2);
+
+    const client = new NFTStorage({
+      /* @ts-ignore */
+      token: process.env.REACT_APP_NFT_STORAGE,
+    });
+
+    const fileType = avatar.name.split(".")[1];
+    const nftURI = await client.store({
+      image: new Blob([avatar], { type: `image/${fileType}` }),
+      description: "Podcha",
+      name: userHandle,
+    });
+    const followNFTURI = nftURI.url;
+
+    setStep(3);
+
+    const inputStruct = {
+      to: account!,
+      handle: userHandle,
+      imageURI: `https://${cid}.ipfs.dweb.link/${avatar.name}`,
+      followModule: ethers.constants.AddressZero,
+      followModuleInitData: ethers.utils.concat([]),
+      followNFTURI,
+    };
+
+    try {
+      const tx = await profileContract!.proxyCreateProfile(inputStruct);
+      const receipt = await tx.wait();
+      console.log(receipt);
+      setStep(5);
+      refreshProfiles();
     } catch (error) {
       console.error({ error });
+    }
+  };
+
+  if (!account) {
+    return <div>You need to connect your wallet to create a podcast.</div>;
+  }
+
+  const createPodcast = async () => {
+    setStep(1);
+    try {
+      await profileCreate();
+    } catch (error) {
+      setError((error as Error).message);
     }
   };
 
@@ -171,87 +201,115 @@ export function CreatePodcastPage() {
   //   }
   // };
 
-  useEffect(() => {
-    if (!account) return;
-
-    const setContracts = async () => {
-      try {
-        /* @ts-ignore */
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        setLensMockProfileContract(
-          MockProfileCreationProxy__factory.connect(mockProfileAddress, signer)
-        );
-        setLensPeripheryContract(
-          LensPeriphery__factory.connect(LensPeripheryAddress, signer)
-        );
-      } catch (error) {
-        console.error({ error });
-      }
-    };
-
-    setContracts();
-  }, [account]);
-
-  if (!account) {
-    return <div>You need to connect your wallet to create a podcast.</div>;
-  }
-
   return (
-    <div className="text-black">
-      {account}
+    <div>
+      <div className="text-lg bold">Create podcast</div>
       <div>
-        <input
-          type="text"
-          onChange={(event) => setUserHandle(event.target.value)}
-          value={userHandle}
-        />
-        <button onClick={profileCreate}>Create</button>
-        <input type="file" onChange={(event) => setFile(event.target.files)} />
-        {profiles && (
-          <div>
-            List of your profiles:
-            <p>Selected Profile: {lensId}</p>
-            <div className="flex flex-col gap-2 m-2">
-              {profiles.map((profile) => (
-                <div
-                  key={profile.handle}
-                  onClick={() => setLensId(profile.id)}
-                  className="w-40 h-20 border-4 border-black border-solid cursor-pointer hover:scale-110 active:scale-90"
-                >
-                  <img
-                    src={profile.picture?.original?.url}
-                    alt="ProfilePic"
-                    className="w-10 h-10"
-                  />
-                  <p>{profile.handle}</p>
-                </div>
-              ))}
-            </div>
-            {lensId && (
-              <div>
-                <p>Title: </p>
-                <input
-                  type="text"
-                  onChange={(event) => setTitle(event.target.value)}
-                  value={title}
-                />
-                <p>Bio: </p>
-                <input
-                  type="text"
-                  onChange={(event) => setBio(event.target.value)}
-                  value={bio}
-                />
-                <input
-                  type="file"
-                  onChange={(event) => setFile(event.target.files)}
-                />
-                <button onClick={setProfileMetadata}>Add metadata</button>
-              </div>
-            )}
+        <div className="w-full max-w-xs form-control">
+          <label className="label">
+            <span className="label-text">Your new handle</span>
+          </label>
+          <input
+            className="w-full max-w-xs input input-bordered"
+            type="text"
+            placeholder="e.g. keescast"
+            onChange={(event) => setUserHandle(event.target.value)}
+            value={userHandle}
+          />
+        </div>
+
+        <div className="w-full max-w-xs form-control ">
+          <label className="label">
+            <span className="label-text">Select an avatar</span>
+          </label>
+          <div className="flex items-center justify-center input input-bordered">
+            <input
+              className="flex items-center justify-center w-full max-w-xs p-0 "
+              type="file"
+              multiple={false}
+              onChange={(event) =>
+                setAvatar(
+                  event.target.files ? event.target.files[0] : undefined
+                )
+              }
+            />
           </div>
-        )}
+        </div>
+
+        <div className="w-full max-w-xs form-control ">
+          <label className="label">
+            <span className="label-text">Select a cover photo</span>
+          </label>
+          <div className="flex items-center justify-center input input-bordered">
+            <input
+              className="flex items-center justify-center w-full max-w-xs p-0 "
+              type="file"
+              multiple={false}
+              onChange={(event) =>
+                setCoverPhoto(
+                  event.target.files ? event.target.files[0] : undefined
+                )
+              }
+            />
+          </div>
+        </div>
+
+        <div className="w-full max-w-xs form-control">
+          <label className="label">
+            <span className="label-text">Podcast title</span>
+          </label>
+          <input
+            className="w-full max-w-xs input input-bordered"
+            type="text"
+            placeholder="e.g. Salty Keez & Friends"
+            onChange={(event) => setTitle(event.target.value)}
+            value={title}
+          />
+        </div>
+
+        <div className="w-full max-w-xs form-control">
+          <label className="label">
+            <span className="label-text">Podcast description</span>
+          </label>
+          <input
+            className="w-full max-w-xs input input-bordered"
+            type="text"
+            placeholder="e.g. Long, long ago... in a far away lorem ipsum dolor sit amet..."
+            onChange={(event) => setBio(event.target.value)}
+            value={bio}
+          />
+        </div>
+
+        <button className="mt-2 btn" onClick={createPodcast}>
+          Create
+        </button>
       </div>
+      {/* Progress modal */}
+      <label className={`modal ${step ? "modal-open" : ""}`}>
+        <label className="relative modal-box">
+          <h3 className="text-lg font-bold">Creating a Podcast...</h3>
+          <progress
+            className="w-full progress progress-primary"
+            value={step}
+            max={9}
+          ></progress>
+          <p className="py-4">
+            Please sign the transactions to create a podcast...
+          </p>
+        </label>
+      </label>
+      <label className={`cursor-pointer modal ${error ? "modal-open" : ""}`}>
+        <label className="relative modal-box">
+          <label
+            onClick={() => setError(undefined)}
+            className="absolute btn btn-sm btn-circle right-2 top-2"
+          >
+            ✕
+          </label>
+          <h3 className="text-lg font-bold">Error has occurred</h3>
+          <p className="py-4">{error}</p>
+        </label>
+      </label>
     </div>
   );
 }
