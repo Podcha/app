@@ -2,7 +2,6 @@ import { useEthers } from "@usedapp/core";
 import { Link } from "react-router-dom";
 import { lensAppId, walletConnectProvider } from "../consts";
 import { useLens } from "../context";
-import { isSafari } from "../utils";
 import { DropdownIcon } from "./icons";
 
 export function WalletButton() {
