@@ -10,15 +10,8 @@ import { NFTStorage } from "nft.storage";
 import { v4 as uuidv4 } from "uuid";
 import { useEthers } from "@usedapp/core";
 import { useLens } from "../../context";
+import { mockProfileAddress, LensPeripheryAddress } from "../../consts";
 import {
-  mockProfileAddress,
-  LensHubProxyAddress,
-  freeCollectModuleAddress,
-  LensPeripheryAddress,
-} from "../../consts";
-import {
-  LensHub__factory,
-  LensHub,
   MockProfileCreationProxy__factory,
   MockProfileCreationProxy,
   LensPeriphery,
@@ -26,26 +19,16 @@ import {
 } from "../../contracts/lens";
 
 export function CreatePodcastPage() {
-  const [user, setUser] = useState(null);
   const [userHandle, setUserHandle] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [bio, setBio] = useState<string>("");
   const [lensId, setLensId] = useState<string>("");
-  const [lensHubContract, setLensHubContract] = useState<LensHub>();
   const [imageCID, setImageCID] = useState<string>("");
   const [file, setFile] = useState<FileList | null>();
   const [lensMockProfileContract, setLensMockProfileContract] =
     useState<MockProfileCreationProxy>();
   const [lensPeripheryContract, setLensPeripheryContract] =
     useState<LensPeriphery>();
-
-  const connect = async () => {
-    /* @ts-ignore */
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    setUser(accounts[0]);
-  };
 
   const { account } = useEthers();
   const { profiles, refreshProfiles } = useLens();
@@ -189,16 +172,13 @@ export function CreatePodcastPage() {
   // };
 
   useEffect(() => {
-    if (!user) return;
+    if (!account) return;
 
     const setContracts = async () => {
       try {
         /* @ts-ignore */
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        setLensHubContract(
-          LensHub__factory.connect(LensHubProxyAddress, signer)
-        );
         setLensMockProfileContract(
           MockProfileCreationProxy__factory.connect(mockProfileAddress, signer)
         );
@@ -211,15 +191,15 @@ export function CreatePodcastPage() {
     };
 
     setContracts();
-  }, [user]);
+  }, [account]);
 
-  if (!user) {
-    return <button onClick={connect}>Connect</button>;
+  if (!account) {
+    return <div>You need to connect your wallet to create a podcast.</div>;
   }
 
   return (
     <div className="text-black">
-      {user}
+      {account}
       <div>
         <input
           type="text"
