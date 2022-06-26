@@ -10,6 +10,7 @@ import { lensFreeCollectModuleAddress } from "../../consts";
 
 export function CreateEpisodePage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const { account } = useEthers();
@@ -122,8 +123,8 @@ export function CreateEpisodePage() {
               className="w-full max-w-s input input-bordered"
               type="text"
               placeholder="e.g. Cool episode about lens API being down..."
-              onChange={(event) => setDescription(event.target.value)}
-              value={description}
+              onChange={(event) => setName(event.target.value)}
+              value={name}
             />
           </div>
           <div className="w-full max-w-s form-control">
