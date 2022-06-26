@@ -85,7 +85,7 @@ export function CreatePodcastPage() {
       refreshProfiles();
       navigate("/podcasts");
     },
-    [bio, coverPhoto, peripheryContract, title, refreshProfiles]
+    [bio, coverPhoto, peripheryContract, title, refreshProfiles, navigate]
   );
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export function CreatePodcastPage() {
       setError((error as Error).message);
       setStep(0);
     }
-  }, [step, profiles, setProfileMetadata, userHandle]);
+  }, [step, profiles, setProfileMetadata, userHandle, refreshProfiles]);
 
   const profileCreate = async () => {
     if (!avatar) throw new Error("No avatar selected");
