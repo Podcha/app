@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useEthers } from "@usedapp/core";
 import { useLens } from "../../context";
 import { useNavigate } from "react-router-dom";
+import { WorldIDComponent } from "../../components/WorldIDComponent";
 
 export function CreatePodcastPage() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export function CreatePodcastPage() {
   const [coverPhoto, setCoverPhoto] = useState<File | null>();
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | undefined>();
+  const [worldIDProof, setWorldIDProof] = useState<string>("");
 
   const { account } = useEthers();
   const {
@@ -229,6 +231,10 @@ export function CreatePodcastPage() {
   return (
     <div>
       <div className="text-lg bold">Create podcast</div>
+      <WorldIDComponent
+        signal={account}
+        setProof={(proof: any) => setWorldIDProof(proof)}
+      />
       <div>
         <div className="w-full max-w-xs form-control">
           <label className="label">
