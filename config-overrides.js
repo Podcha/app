@@ -1,4 +1,5 @@
 const webpack = require("webpack");
+
 module.exports = function override(config, env) {
   // Some config overrides to make @walletconnect/web3-provider work with Webpack 5
 
@@ -18,6 +19,13 @@ module.exports = function override(config, env) {
       Buffer: ["buffer", "Buffer"],
     })
   );
+
+  config.module.rules.push({
+    test: /\.m?js/,
+    resolve: {
+      fullySpecified: false,
+    },
+  });
 
   return config;
 };
