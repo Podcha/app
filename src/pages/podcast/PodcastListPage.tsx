@@ -25,7 +25,7 @@ export function PodcastListPage() {
             podcast.attributes?.app?.value === lensAppId && podcast.coverPicture
         )
         .map((podcast) => (
-          <Link key={podcast.handle} to={`/podcasts/${podcast.handle}`}>
+          <Link key={podcast.id} to={`/podcasts/${podcast.id}`}>
             <div className="shadow-xl card bg-base-100">
               <figure>
                 <img
