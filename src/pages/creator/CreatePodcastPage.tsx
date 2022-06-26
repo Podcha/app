@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { ethers } from "ethers";
+import { Framework as SuperfluidFramework } from "@superfluid-finance/sdk-core";
 
 // TODO: add typings for these libraries
 // @ts-ignore
@@ -11,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useEthers } from "@usedapp/core";
 import { useLens } from "../../context";
 import { useNavigate } from "react-router-dom";
+import { WorldIDComponent } from "../../components/WorldIDComponent";
 
 export function CreatePodcastPage() {
   const navigate = useNavigate();
@@ -21,6 +23,11 @@ export function CreatePodcastPage() {
   const [coverPhoto, setCoverPhoto] = useState<File | null>();
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | undefined>();
+  const [worldIDProof, setWorldIDProof] = useState<string>("");
+  const [superfluid, setSuperfluid] = useState(undefined);
+  const [existingFlow, setExistingFlow] = useState(false);
+
+  const daiTokenContract = "0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f";
 
   const { account } = useEthers();
   const {
@@ -136,6 +143,9 @@ export function CreatePodcastPage() {
 
   const profileCreate = async () => {
     if (!avatar) throw new Error("No avatar selected");
+    if (existingFlow) {
+      throw new Error("You have the stream open");
+    }
 
     const storage = new Web3Storage({
       /* @ts-ignore */
@@ -163,6 +173,16 @@ export function CreatePodcastPage() {
 
     setStep(3);
 
+    // const signer = provider.getSigner(0);
+    // const createFlowOperation = superfluid.cfaV1.createFlow({
+    //   sender: address,
+    //   receiver: process.env.REACT_APP_CONTRACT_ADDRESS,
+    //   superToken: daiTokenContract,
+    //   flowRate: 1000,
+    // });
+    // const txnResponse = await createFlowOperation.exec(signer);
+    // const txnReceipt = await txnResponse.wait();
+
     const inputStruct = {
       to: account!,
       handle: userHandle,
@@ -177,7 +197,7 @@ export function CreatePodcastPage() {
     console.log(receipt);
     setStep(5);
     refreshProfiles();
-  };
+  };;
 
   if (!account) {
     return <div>You need to connect your wallet to create a podcast.</div>;
@@ -226,9 +246,55 @@ export function CreatePodcastPage() {
   //   }
   // };
 
+  // useEffect(() => {
+  //   if (!provider) {
+  //     setSuperfluid(undefined);
+  //     return;
+  //   }
+  //   SuperfluidFramework.create({
+  //     chainId: 80001,
+  //     provider,
+  //   }).then(setSuperfluid);
+  // }, [provider]);
+
+  // useEffect(() => {
+  //   if (!superfluid) return;
+  //   setIsLoading(true);
+  //   const fetchStream = async () => {
+  //     const signer = provider.getSigner(0);
+  //     try {
+  //       const flow = await superfluid.cfaV1.getFlow({
+  //         sender: address,
+  //         receiver: process.env.REACT_APP_CONTRACT_ADDRESS,
+  //         superToken: daiTokenContract,
+  //         providerOrSigner: signer,
+  //       });
+  //       if (Number(flow.flowRate) > 0) {
+  //         console.log(flow);
+  //         setExistingFlow(flow);
+  //       }
+  //     } catch (e) {
+  //       console.log(e);
+  //       setExistingFlow(null);
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   setTimeout(() => {
+  //     fetchStream();
+  //     setIsLoading(false);
+  //   }, 3000);
+  // }, [address, provider, superfluid]);
+
   return (
     <div>
       <div className="text-lg bold">Create podcast</div>
+      {account && (
+        <WorldIDComponent
+          signal={account}
+          setProof={(proof: any) => setWorldIDProof(proof)}
+        />
+      )}
       <div>
         <div className="w-full max-w-xs form-control">
           <label className="label">
