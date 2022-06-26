@@ -23,8 +23,29 @@ export function CreatePodcastPage() {
   const [error, setError] = useState<string | undefined>();
 
   const { account } = useEthers();
-  const { profiles, refreshProfiles, peripheryContract, profileContract } =
-    useLens();
+  const {
+    profiles,
+    refreshProfiles,
+    peripheryContract,
+    profileContract,
+    hubContract,
+    activeProfile,
+  } = useLens();
+
+  const initMirror = async () => {
+    const mirrorStruct = {
+      profileId: ethers.BigNumber.from(activeProfile?.id),
+      publicationId: "0x2704-0x01",
+      profileIdPointed: ethers.BigNumber.from("0x2704"),
+      pubIdPointed: ethers.BigNumber.from("0x01"),
+      referenceModuleData: [],
+      referenceModule: ethers.constants.AddressZero,
+      referenceModuleInitData: [],
+    };
+
+    const mirrorTx = await hubContract?.mirror(mirrorStruct);
+    await mirrorTx?.wait();
+  };
 
   const setProfileMetadata = useCallback(
     async (id: string) => {
@@ -41,18 +62,13 @@ export function CreatePodcastPage() {
 
       setStep(7);
 
-      let imageCID = `https://${coverImageCid}.ipfs.dweb.link/`;
+      const imageCID = `https://${coverImageCid}.ipfs.dweb.link/`;
 
       const metadata = {
         name: title,
         bio,
         cover_picture: imageCID,
         attributes: [
-          {
-            traitType: "boolean",
-            value: false,
-            key: "isCreator",
-          },
           {
             traitType: "string",
             value: "Podcha",
@@ -89,21 +105,25 @@ export function CreatePodcastPage() {
   );
 
   useEffect(() => {
-    if (step !== 5) return;
-    const profile = profiles?.filter(
-      (profile) => profile.handle.split(".")[0] === userHandle
-    )[0];
-    if (!profile) {
-      refreshProfiles();
-      return;
-    }
-    setStep(6);
-    try {
-      setProfileMetadata(profile.id);
-    } catch (error) {
-      setError((error as Error).message);
-      setStep(0);
-    }
+    (async () => {
+      if (step !== 5) return;
+      const profile = profiles?.filter(
+        (profile) => profile.handle.split(".")[0] === userHandle
+      )[0];
+      if (!profile) {
+        refreshProfiles();
+        return;
+      }
+      setStep(6);
+      try {
+        await setProfileMetadata(profile.id);
+        setStep(9);
+        await initMirror();
+      } catch (error) {
+        setError((error as Error).message);
+        setStep(0);
+      }
+    })();
   }, [step, profiles, setProfileMetadata, userHandle]);
 
   const profileCreate = async () => {
