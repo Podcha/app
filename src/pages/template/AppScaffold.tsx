@@ -3,9 +3,9 @@ import { AppNavbar, Footer } from "../../components";
 
 export function AppScaffold() {
   return (
-    <div>
+    <div className="flex flex-col min-h-[calc(100vh-3rem)]">
       <AppNavbar />
-      <div className="p-4 mt-4 rounded-box bg-base-200 h-[calc(100vh-8rem)]">
+      <div className="flex-1 p-4 mt-4 rounded-box bg-base-200">
         <Outlet />
       </div>
       <Footer />
