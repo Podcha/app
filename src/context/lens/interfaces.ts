@@ -1,4 +1,4 @@
-export interface LensProfilePicture {
+export interface LensPicture {
   original: {
     mimeType: null;
     url: string;
@@ -18,7 +18,7 @@ export interface LensProfileStats {
 export interface LensProfile {
   attributes: { [key: string]: { traitType: string; value: any } };
   bio: string | null;
-  coverPicture: string | null;
+  coverPicture: LensPicture | null;
   dispatcher: string | null;
   followModule: string | null;
   handle: string;
@@ -27,7 +27,7 @@ export interface LensProfile {
   metadata: string | null; // ipfs url
   name: string | null; // regular string or null
   ownedBy: string; // wallet address
-  picture: LensProfilePicture;
+  picture: LensPicture;
   stats: LensProfileStats;
   metadataObject: any | undefined;
 }

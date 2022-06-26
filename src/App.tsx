@@ -23,12 +23,12 @@ export function App() {
           <Route path=":sortType" element={<FeedPage />} />
           <Route path="" element={<FeedPage />} />
         </Route>
-        <Route path="/podcasts" element={<PodcastListPage />} />
         <Route path="/trending" element={<TrendingListPage />} />
-        <Route path="/podcast">
-          <Route path="create" element={<CreatePodcastPage />} />
+        <Route path="/podcasts">
+          <Route path="" element={<PodcastListPage />} />
           <Route path=":id" element={<PodcastPage />} />
         </Route>
+        <Route path="/create-podcast" element={<CreatePodcastPage />} />
       </Route>
     </Routes>
   );
