@@ -18,7 +18,7 @@ import {
   MockProfileCreationProxy,
   LensPeriphery,
   LensPeriphery__factory,
-} from "../../contracts/Lens";
+} from "../../contracts/lens";
 
 export function CreatePodcastPage() {
   const [user, setUser] = useState(null);
