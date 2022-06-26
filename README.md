@@ -28,7 +28,7 @@ Regarding the data: this is stored in IPFS, a peer to peer service for hosting c
 ## Technology
 
 <h3 >
-  FrontEnd
+  Frontend
 </h3>
 
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) 
