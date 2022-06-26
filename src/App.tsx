@@ -7,7 +7,7 @@ import {
   PodcastPage,
   AppScaffold,
   LandingScaffold,
-  TrendingListPage,
+  CreateEpisodePage,
 } from "./pages";
 import { Error404Page } from "./pages/error/Error404Page";
 
@@ -23,12 +23,14 @@ export function App() {
           <Route path=":sortType" element={<FeedPage />} />
           <Route path="" element={<FeedPage />} />
         </Route>
-        <Route path="/trending" element={<TrendingListPage />} />
         <Route path="/podcasts">
           <Route path="" element={<PodcastListPage />} />
-          <Route path=":id" element={<PodcastPage />} />
+          <Route path=":id">
+            <Route path="" element={<PodcastPage />} />
+          </Route>
         </Route>
         <Route path="/create-podcast" element={<CreatePodcastPage />} />
+        <Route path="/create-episode" element={<CreateEpisodePage />} />
       </Route>
     </Routes>
   );

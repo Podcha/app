@@ -20,5 +20,5 @@ export function FeedPage() {
     }
   }, [rawSortType]);
 
-  return <div>FeedPage (sort type: {FeedSortType[sortType]})</div>;
+  return <div>TODO FeedPage (sort type: {FeedSortType[sortType]})</div>;
 }

@@ -1,4 +1,6 @@
 import { NavLink } from "react-router-dom";
+import { lensAppId } from "../consts";
+import { useLens } from "../context";
 import { DropdownIcon, DroprightIcon, HamburgerIcon } from "./icons";
 import { WalletButton } from "./WalletButton";
 
@@ -8,7 +10,6 @@ const links: {
   children?: { name: string; to: string }[];
 }[] = [
   { name: "Podcasts", to: "/podcasts" },
-  { name: "Trending", to: "/trending" },
   {
     name: "Episodes",
     to: "/episodes",
@@ -17,10 +18,13 @@ const links: {
       { name: "Newest", to: "/episodes/newest" },
     ],
   },
-  { name: "My show", to: "/create-podcast" },
 ];
 
 export function AppNavbar() {
+  const { activeProfile } = useLens();
+  console.log(activeProfile);
+  const isCreator = activeProfile?.attributes.app.value === lensAppId;
+  console.log(isCreator);
   let tabIndex = 0;
   return (
     <div className="navbar bg-base-100 rounded-box">
@@ -50,6 +54,16 @@ export function AppNavbar() {
                 )}
               </li>
             ))}
+            {isCreator && (
+              <li tabIndex={tabIndex++}>
+                <NavLink
+                  to={`/podcasts/${activeProfile?.id}`}
+                  className="justify-between"
+                >
+                  My podcast
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
         <a className="text-xl normal-case btn btn-ghost" href="/">
@@ -74,6 +88,16 @@ export function AppNavbar() {
                 )}
               </li>
             ))}
+            {isCreator && (
+              <li tabIndex={tabIndex++}>
+                <NavLink
+                  to={`/podcasts/${activeProfile?.id}`}
+                  className="justify-between"
+                >
+                  My podcast
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
       </div>
