@@ -23,7 +23,7 @@ const links: {
 export function AppNavbar() {
   const { activeProfile } = useLens();
   console.log(activeProfile);
-  const isCreator = activeProfile?.attributes.app.value === lensAppId;
+  const isCreator = activeProfile?.attributes.app?.value === lensAppId;
   console.log(isCreator);
   let tabIndex = 0;
   return (
