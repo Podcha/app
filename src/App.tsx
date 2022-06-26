@@ -24,9 +24,9 @@ export function App() {
         </Route>
         <Route path="/podcasts">
           <Route path="" element={<PodcastListPage />} />
-          <Route path="create" element={<CreatePodcastPage />} />
           <Route path=":id" element={<PodcastPage />} />
         </Route>
+        <Route path="/create-podcast" element={<CreatePodcastPage />} />
       </Route>
     </Routes>
   );

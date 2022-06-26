@@ -11,10 +11,16 @@ export function PodcastListPage() {
     fetchPodcasts().then(setPodcasts);
   }, [fetchPodcasts, setPodcasts]);
 
+  if (!podcasts || podcasts.length === 0) {
+    return (
+      <button className="self-center flex-1 bg-transparent border-none justify-self-center btn loading btn-square" />
+    );
+  }
+
   return (
     <div className="grid grid-cols-4 gap-4">
       {podcasts
-        ?.filter(
+        .filter(
           (podcast) =>
             podcast.attributes?.app?.value === lensAppId && podcast.coverPicture
         )
