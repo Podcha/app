@@ -100,7 +100,7 @@ export function CreatePodcastPage() {
       setStep(0);
       refreshProfiles();
     },
-    [bio, coverPhoto, peripheryContract, title, refreshProfiles, navigate]
+    [bio, coverPhoto, peripheryContract, title, refreshProfiles]
   );
 
   useEffect(() => {
@@ -131,6 +131,7 @@ export function CreatePodcastPage() {
     userHandle,
     refreshProfiles,
     initMirror,
+    navigate,
   ]);
 
   const profileCreate = async () => {
