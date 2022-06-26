@@ -7,6 +7,32 @@
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Your favourite podcasts. On chain." />
     <title>Podcha</title>
+        <!-- Unlock snippet -->
+        <!-- Unlock snippet -->
+        <script> (function (d, s) {
+            var js = d.createElement(s),
+              sc = d.getElementsByTagName(s)[0];
+            js.src = "https://paywall.unlock-protocol.com/static/unlock.latest.min.js";
+            sc.parentNode.insertBefore(js, sc);
+          }(document, "script"));
+        </script>
+        
+        <!-- Unlock Configuration -->
+        <script>
+          var unlockProtocolConfig = {
+            network: 80001,
+            locks: {
+              '0x6b4121DE536c7B31352D1044963c28f6f543e10a': {
+                name: 'A mumbai lock',
+              },
+            },
+            icon: 'https://unlock-protocol.com/static/images/svg/unlock-word-mark.svg',
+            callToAction: {
+              default:
+                'Please Unlock things!',
+            },
+          }
+        </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
