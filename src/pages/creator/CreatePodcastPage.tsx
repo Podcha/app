@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
+
+// TODO: add typings for these libraries
+// @ts-ignore
 import { Web3Storage } from "web3.storage";
+// @ts-ignore
 import { NFTStorage } from "nft.storage";
+
 import { v4 as uuidv4 } from "uuid";
 import { useEthers } from "@usedapp/core";
 import { useLens } from "../../context";
@@ -41,7 +46,6 @@ export function CreatePodcastPage() {
     });
     setUser(accounts[0]);
   };
-
 
   const { account } = useEthers();
   const { profiles, refreshProfiles } = useLens();
@@ -233,7 +237,7 @@ export function CreatePodcastPage() {
                 <div
                   key={profile.handle}
                   onClick={() => setLensId(profile.id)}
-                  className="w-40 h-20 border-solid border-4 border-black cursor-pointer hover:scale-110 active:scale-90"
+                  className="w-40 h-20 border-4 border-black border-solid cursor-pointer hover:scale-110 active:scale-90"
                 >
                   <img
                     src={profile.picture?.original?.url}
