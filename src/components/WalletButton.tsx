@@ -113,7 +113,7 @@ export function WalletButton() {
               </button>
             ))}
           <div className="flex px-2 space-x-2">
-            <Link to="/podcast/create">
+            <Link to="/podcasts/create">
               <button className="btn">+</button>
             </Link>
             <button className="flex-1 btn" onClick={deactivate}>

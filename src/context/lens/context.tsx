@@ -15,11 +15,15 @@ export interface LensContextValue {
   hubContract?: LensHub;
   setActiveProfile: (profile: LensProfile) => void;
   refreshProfiles: () => void;
+  fetchPodcasts: () => Promise<LensProfile[]>;
 }
 
 export const LensContext = createContext<LensContextValue>({
   setActiveProfile: () => {},
   refreshProfiles: () => {},
+  fetchPodcasts: () => {
+    return Promise.resolve([]);
+  },
 });
 
 export const useLens = () => useContext(LensContext);

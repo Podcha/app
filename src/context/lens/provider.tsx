@@ -17,6 +17,21 @@ import { lensApiClient, getProfiles, getProfilesByMirror } from "../../queries";
 import { LensContext } from "./context";
 import { LensProfile } from "./interfaces";
 
+function transformProfiles(newProfiles: any) {
+  return newProfiles.map((profile: any) => {
+    return {
+      ...profile,
+      attributes: profile.attributes
+        ? (profile.attributes as any[]).reduce((prev, curr) => {
+            const { key, ...rest } = curr;
+            prev[key] = rest;
+            return prev;
+          }, {})
+        : {},
+    } as LensProfile;
+  });
+}
+
 export function LensProvider({ children }: { children: JSX.Element }) {
   const [profiles, setProfiles] = useState<LensProfile[]>();
 
@@ -31,6 +46,16 @@ export function LensProvider({ children }: { children: JSX.Element }) {
 
   const { account: address, library } = useEthers();
 
+  const fetchPodcasts = useCallback(() => {
+    return lensApiClient
+      .query(getProfilesByMirror)
+      .toPromise()
+      .then(async (response) => {
+        return transformProfiles(response.data.profiles.items);
+        // TODO: this response is paginated, and we're just silently ignoring this fact
+      });
+  }, []);
+
   const refreshProfiles = useCallback(() => {
     if (!address) return setProfiles(undefined);
     lensApiClient
@@ -39,21 +64,7 @@ export function LensProvider({ children }: { children: JSX.Element }) {
       .then(async (response) => {
         const newProfiles: any[] = response.data.profiles.items;
         // TODO: this response is paginated, and we're just silently ignoring this fact
-        setProfiles(
-          newProfiles.map((profile) => {
-            console.log(profile);
-            return {
-              ...profile,
-              attributes: profile.attributes
-                ? (profile.attributes as any[]).reduce((prev, curr) => {
-                    const { key, ...rest } = curr;
-                    prev[key] = rest;
-                    return prev;
-                  }, {})
-                : {},
-            };
-          })
-        );
+        setProfiles(transformProfiles(newProfiles));
       });
   }, [address]);
 
@@ -105,6 +116,7 @@ export function LensProvider({ children }: { children: JSX.Element }) {
         profileContract,
         peripheryContract,
         hubContract,
+        fetchPodcasts,
       }}
     >
       {children}

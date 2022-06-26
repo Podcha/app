@@ -16,7 +16,7 @@ const links: {
       { name: "Newest", to: "/episodes/newest" },
     ],
   },
-  { name: "My show", to: "/podcast/create" },
+  { name: "My show", to: "/podcasts/create" },
 ];
 
 export function AppNavbar() {
