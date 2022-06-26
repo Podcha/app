@@ -8,12 +8,14 @@ import {
   AppScaffold,
   LandingScaffold,
 } from "./pages";
+import { Error404Page } from "./pages/error/Error404Page";
 
 export function App() {
   return (
     <Routes>
       <Route element={<LandingScaffold />}>
         <Route path="/" element={<LandingPage />} />
+        <Route path="*" element={<Error404Page />} />
       </Route>
       <Route element={<AppScaffold />}>
         <Route path="/episodes">

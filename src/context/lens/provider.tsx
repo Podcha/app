@@ -1,59 +1,8 @@
 import { useEthers } from "@usedapp/core";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { lensApiClient, getProfiles } from "../queries";
-
-interface LensProfilePicture {
-  original: {
-    mimeType: null;
-    url: string;
-  };
-}
-
-interface LensProfileStats {
-  totalCollects: 0;
-  totalComments: 0;
-  totalFollowers: 0;
-  totalFollowing: 0;
-  totalMirrors: 0;
-  totalPosts: 0;
-  totalPublications: 0;
-}
-
-interface LensProfile {
-  attributes: { [key: string]: { traitType: string; value: any } };
-  bio: string | null;
-  coverPicture: string | null;
-  dispatcher: string | null;
-  followModule: string | null;
-  handle: string;
-  id: string;
-  isDefault: boolean;
-  metadata: string | null; // ipfs url
-  name: string | null; // regular string or null
-  ownedBy: string; // wallet address
-  picture: LensProfilePicture;
-  stats: LensProfileStats;
-  metadataObject: any | undefined;
-}
-
-interface LensContextValue {
-  profiles?: LensProfile[];
-  activeProfile?: LensProfile;
-  defaultProfile?: LensProfile;
-  setActiveProfile: (profile: LensProfile) => void;
-  refreshProfiles: () => void;
-}
-
-export const LensContext = createContext<LensContextValue>({
-  setActiveProfile: () => {},
-  refreshProfiles: () => {},
-});
+import { useCallback, useEffect, useState } from "react";
+import { lensApiClient, getProfiles } from "../../queries";
+import { LensContext } from "./context";
+import { LensProfile } from "./interfaces";
 
 export function LensProvider({ children }: { children: JSX.Element }) {
   const [profiles, setProfiles] = useState<LensProfile[]>();
@@ -113,5 +62,3 @@ export function LensProvider({ children }: { children: JSX.Element }) {
     </LensContext.Provider>
   );
 }
-
-export const useLens = () => useContext(LensContext);

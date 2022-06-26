@@ -23,7 +23,7 @@ export function WalletButton() {
             Connect wallet
             <DropdownIcon />
           </button>
-          <ul className="z-10 p-2 bg-base-200">
+          <ul className="z-10 p-2 shadow-xl bg-base-200">
             <li>
               <button onClick={activateBrowserWallet}>Browser wallet</button>
             </li>
@@ -67,7 +67,7 @@ export function WalletButton() {
           )}
           <DropdownIcon />
         </button>
-        <ul className="z-10 w-full py-2 mt-0 space-y-2 bg-base-200 menu menu-vertical">
+        <ul className="z-10 w-full py-2 mt-0 space-y-2 shadow-xl bg-base-200 menu menu-vertical">
           {profiles
             ?.filter((profile) => profile !== activeProfile)
             .map((profile, key) => (
