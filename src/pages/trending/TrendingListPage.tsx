@@ -39,18 +39,13 @@ export function TrendingListPage() {
       version: "1.0.0",
       metadata_id: uuidv4(),
       description,
-      content,
+      content: videoUrl,
       external_url: null,
       image: null,
       imageMimeType: null,
       name: activeProfile?.name,
       attributes: [],
-      media: [
-        {
-          item: videoUrl,
-          type: "video/mp4",
-        },
-      ],
+      media: [],
       appId: "Podcha",
     };
     const blob = new Blob([JSON.stringify(postSchema)], {
@@ -65,7 +60,7 @@ export function TrendingListPage() {
 
     const postStruct = {
       profileId: ethers.BigNumber.from(activeProfile?.id),
-      contentURI: `https://${cid}.ipfs.dweb.link/`,
+      contentURI: `https://ipfs.dweb.link/${cid}`,
       collectModule: lensFreeCollectModuleAddress,
       collectModuleInitData: ethers.utils.defaultAbiCoder.encode(
         ["bool"],
@@ -107,15 +102,15 @@ export function TrendingListPage() {
       };
       const ipfs = await minter.api.exportToIPFS(asset.id, nftMetadata);
 
-      setVideoUrl(ipfs.videoFileGatewayUrl);
+      /* @ts-ignore */
+      setVideoUrl(asset.downloadUrl);
       // const tx = await minter.web3.mintNft(ipfs.nftMetadataUrl);
       // const nftInfo = await minter.web3.getMintedNftInfo(tx);
       // console.log(
       //   `minted NFT on contract ${nftInfo.contractAddress} with ID ${nftInfo.tokenId}`
       // );
-
-      await post();
       setIsLoading(false);
+      console.log(videoUrl);
     } catch (error) {
       setIsLoading(false);
       console.error(error);
@@ -143,24 +138,13 @@ export function TrendingListPage() {
               value={description}
             />
           </div>
-          <div className="w-full max-w-xs form-control">
-            <label className="label">
-              <span className="label-text">Content</span>
-            </label>
-            <input
-              className="w-full max-w-xs input input-bordered"
-              type="text"
-              placeholder="The content of the post"
-              onChange={(event) => setContent(event.target.value)}
-              value={content}
-            />
-          </div>
           <button
             className="border-solid border-2 border-black rounded p-1 mt-1"
             onClick={() => uploadVideo()}
           >
             Click here to mint NFT Video
           </button>
+          <button onClick={post}>Post</button>
         </div>
         <div className="grid grid-cols-2 gap-4">
           {/* {videoUrl && (
