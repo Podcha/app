@@ -32,7 +32,7 @@ export function CreatePodcastPage() {
     activeProfile,
   } = useLens();
 
-  const initMirror = async () => {
+  const initMirror = useCallback(async () => {
     const mirrorStruct = {
       profileId: ethers.BigNumber.from(activeProfile?.id),
       publicationId: "0x2704-0x01",
@@ -45,7 +45,7 @@ export function CreatePodcastPage() {
 
     const mirrorTx = await hubContract?.mirror(mirrorStruct);
     await mirrorTx?.wait();
-  };
+  }, [activeProfile?.id, hubContract]);
 
   const setProfileMetadata = useCallback(
     async (id: string) => {
@@ -99,9 +99,8 @@ export function CreatePodcastPage() {
 
       setStep(0);
       refreshProfiles();
-      navigate("/podcasts");
     },
-    [bio, coverPhoto, peripheryContract, title, refreshProfiles]
+    [bio, coverPhoto, peripheryContract, title, refreshProfiles, navigate]
   );
 
   useEffect(() => {
@@ -119,12 +118,20 @@ export function CreatePodcastPage() {
         await setProfileMetadata(profile.id);
         setStep(9);
         await initMirror();
+        navigate("/podcasts");
       } catch (error) {
         setError((error as Error).message);
         setStep(0);
       }
     })();
-  }, [step, profiles, setProfileMetadata, userHandle]);
+  }, [
+    step,
+    profiles,
+    setProfileMetadata,
+    userHandle,
+    refreshProfiles,
+    initMirror,
+  ]);
 
   const profileCreate = async () => {
     if (!avatar) throw new Error("No avatar selected");
@@ -164,15 +171,11 @@ export function CreatePodcastPage() {
       followNFTURI,
     };
 
-    try {
-      const tx = await profileContract!.proxyCreateProfile(inputStruct);
-      const receipt = await tx.wait();
-      console.log(receipt);
-      setStep(5);
-      refreshProfiles();
-    } catch (error) {
-      console.error({ error });
-    }
+    const tx = await profileContract!.proxyCreateProfile(inputStruct);
+    const receipt = await tx.wait();
+    console.log(receipt);
+    setStep(5);
+    refreshProfiles();
   };
 
   if (!account) {
@@ -185,6 +188,7 @@ export function CreatePodcastPage() {
       await profileCreate();
     } catch (error) {
       setError((error as Error).message);
+      setStep(0);
     }
   };
 
