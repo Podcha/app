@@ -1,16 +1,19 @@
 import { useEthers } from "@usedapp/core";
 import { useCallback, useEffect, useState } from "react";
 import {
+  lensHubProxyAddress,
   lensMockProfileCreationAddress,
   lensPeripheryAddress,
 } from "../../consts";
 import {
+  LensHub,
+  LensHub__factory,
   LensPeriphery,
   LensPeriphery__factory,
   MockProfileCreationProxy,
   MockProfileCreationProxy__factory,
 } from "../../contracts/lens";
-import { lensApiClient, getProfiles } from "../../queries";
+import { lensApiClient, getProfiles, getProfilesByMirror } from "../../queries";
 import { LensContext } from "./context";
 import { LensProfile } from "./interfaces";
 
@@ -20,6 +23,7 @@ export function LensProvider({ children }: { children: JSX.Element }) {
   const [profileContract, setProfileContract] =
     useState<MockProfileCreationProxy>();
   const [peripheryContract, setPeripheryContract] = useState<LensPeriphery>();
+  const [hubContract, setHubContract] = useState<LensHub>();
 
   const defaultProfile = profiles?.find((profile) => profile.isDefault);
 
@@ -70,6 +74,10 @@ export function LensProvider({ children }: { children: JSX.Element }) {
     setPeripheryContract(
       LensPeriphery__factory.connect(lensPeripheryAddress, providerOrSigner)
     );
+
+    setHubContract(
+      LensHub__factory.connect(lensHubProxyAddress, providerOrSigner)
+    );
   }, [address, library]);
 
   /* Refresh profiles every time the provider changes */
@@ -95,6 +103,7 @@ export function LensProvider({ children }: { children: JSX.Element }) {
         setActiveProfile,
         profileContract,
         peripheryContract,
+        hubContract,
       }}
     >
       {children}

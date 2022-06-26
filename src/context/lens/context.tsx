@@ -1,5 +1,9 @@
 import { createContext, useContext } from "react";
-import { LensPeriphery, MockProfileCreationProxy } from "../../contracts/lens";
+import {
+  LensHub,
+  LensPeriphery,
+  MockProfileCreationProxy,
+} from "../../contracts/lens";
 import { LensProfile } from "./interfaces";
 
 export interface LensContextValue {
@@ -8,6 +12,7 @@ export interface LensContextValue {
   defaultProfile?: LensProfile;
   profileContract?: MockProfileCreationProxy;
   peripheryContract?: LensPeriphery;
+  hubContract?: LensHub;
   setActiveProfile: (profile: LensProfile) => void;
   refreshProfiles: () => void;
 }
