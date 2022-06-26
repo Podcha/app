@@ -62,6 +62,7 @@ export function LensProvider({ children }: { children: JSX.Element }) {
     if (!library) {
       setProfileContract(undefined);
       setPeripheryContract(undefined);
+      setHubContract(undefined);
       return;
     }
     const providerOrSigner = address ? library.getSigner(address) : library;
