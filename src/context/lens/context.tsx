@@ -16,12 +16,20 @@ export interface LensContextValue {
   setActiveProfile: (profile: LensProfile) => void;
   refreshProfiles: () => void;
   fetchPodcasts: () => Promise<LensProfile[]>;
+  fetchPodcast: (id: string) => Promise<LensProfile>;
+  fetchEpisodesOf: (id: string) => Promise<any[]>;
 }
 
 export const LensContext = createContext<LensContextValue>({
   setActiveProfile: () => {},
   refreshProfiles: () => {},
   fetchPodcasts: () => {
+    return Promise.resolve([]);
+  },
+  fetchPodcast: () => {
+    return Promise.reject();
+  },
+  fetchEpisodesOf: () => {
     return Promise.resolve([]);
   },
 });
