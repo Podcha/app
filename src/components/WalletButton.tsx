@@ -2,6 +2,7 @@ import { useEthers } from "@usedapp/core";
 import { Link } from "react-router-dom";
 import { lensAppId, walletConnectProvider } from "../consts";
 import { useLens } from "../context";
+import { isSafari } from "../utils";
 import { DropdownIcon } from "./icons";
 
 export function WalletButton() {
@@ -15,6 +16,8 @@ export function WalletButton() {
     activate(walletConnectProvider);
   };
 
+  const windowEthereum = Boolean((window as any).ethereum);
+
   if (!account) {
     return (
       <ul className="p-0 menu menu-horizontal rounded-box">
@@ -25,7 +28,17 @@ export function WalletButton() {
           </button>
           <ul className="z-10 p-2 shadow-xl bg-base-200">
             <li>
-              <button onClick={activateBrowserWallet}>Browser wallet</button>
+              <button
+                className={
+                  !windowEthereum
+                    ? "opacity-50 disabled pointer-events-none"
+                    : ""
+                }
+                disabled={!windowEthereum}
+                onClick={activateBrowserWallet}
+              >
+                Browser wallet
+              </button>
             </li>
             <li>
               <button onClick={activateWalletConnect}>WalletConnect</button>
